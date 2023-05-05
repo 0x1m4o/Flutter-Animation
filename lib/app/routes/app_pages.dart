@@ -1,3 +1,5 @@
+import 'package:flutter_animation/app/modules/home/bindings/other_binding.dart';
+import 'package:flutter_animation/app/modules/home/views/other_view.dart';
 import 'package:get/get.dart';
 
 import '../modules/home/bindings/home_binding.dart';
@@ -15,6 +17,11 @@ class AppPages {
       name: _Paths.HOME,
       page: () => HomeView(),
       binding: HomeBinding(),
+    ),
+    GetPage(
+      name: _Paths.OTHER,
+      page: () => OtherView(),
+      binding: OtherBinding(),
     ),
   ];
 }
