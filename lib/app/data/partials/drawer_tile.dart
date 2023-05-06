@@ -11,35 +11,19 @@ class DrawerTile extends StatelessWidget {
   });
 
   final HomeController controllers;
-  final IconData? icon;
+  final String? icon;
   final String? msg;
 
   @override
   Widget build(BuildContext context) {
     return Obx(() => Stack(children: [
-          AnimatedContainer(
-            duration: Duration(milliseconds: 500),
-            color: controllers.color.value,
-            width: controllers.width.value.toDouble(),
-            child: Container(
-              alignment: Alignment.centerLeft,
-              child: Padding(
-                padding: const EdgeInsets.all(14),
-                child: Container(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(20),
-                    child: CircleAvatar(
-                      child: Hero(
-                        tag: '$msg',
-                        child: Image.asset(
-                          'assets/other.jpg',
-                          fit: BoxFit.fill,
-                        ),
-                      ),
-                      backgroundColor: Colors.grey,
-                    ),
-                  ),
-                ),
+          Hero(
+            tag: '$msg',
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Image.asset(
+                'assets/$icon',
+                fit: BoxFit.cover,
               ),
             ),
           ),
@@ -61,7 +45,7 @@ class DrawerTile extends StatelessWidget {
                   child: Opacity(
                     opacity: value,
                     child: Padding(
-                      padding: EdgeInsets.only(left: value * 10),
+                      padding: EdgeInsets.only(left: value * 5),
                       child: child,
                     ),
                   ),

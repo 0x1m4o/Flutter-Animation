@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animation/app/data/partials/drawer_screen.dart';
+import 'package:flutter_animation/app/data/models/dataModels.dart';
 import 'package:flutter_animation/app/modules/home/controllers/other_controller.dart';
 
 import 'package:get/get.dart';
@@ -16,16 +16,20 @@ class _OtherViewState extends State<OtherView>
   final otherC = Get.put(OtherController());
 
   final lastArg = Get.arguments;
-
-  @override
-  // Kita inisialisasi Animation Controller
+  List<DataModels> _dataTiles = [];
+  final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
+// Kita inisialisasi Animation Controller
   AnimationController? _controller;
 
   // lalu inisialisasi Animation untuk color tweenya
   Animation? _colorAnimation;
   Animation? _sizeAnimation;
+  Tween<Offset>? _offset;
   Animation<double>? _curve;
+  @override
   void initState() {
+    super.initState();
+
     // Buat vsync dan duration dari controllernya
     _controller =
         AnimationController(vsync: this, duration: Duration(milliseconds: 500));
@@ -49,12 +53,50 @@ class _OtherViewState extends State<OtherView>
         Get.find<OtherController>().isFav.value = false;
       }
     });
+
+    _offset = Tween(begin: Offset(1, 0), end: Offset(0, 0));
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _addData();
+    });
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
+    super.dispose;
     _controller!.dispose();
+  }
+
+  _addData() {
+    var _data = [
+      DataModels(
+        title: 'Labuan Bajo',
+        description:
+            'Sit non cillum veniam proident est esse. Nostrud occaecat ut eu pariatur enim exercitation sunt proident dolor. In pariatur aliqua officia dolore nisi in in enim in aliqua proident labore irure magna. Eiusmod in pariatur qui sunt laboris velit amet pariatur occaecat exercitation minim. Aute enim magna irure mollit id labore.',
+      ),
+      DataModels(
+        title: 'Aceh',
+        description:
+            'Sit non cillum veniam proident est esse. Nostrud occaecat ut eu pariatur enim exercitation sunt proident dolor. In pariatur aliqua officia dolore nisi in in enim in aliqua proident labore irure magna. Eiusmod in pariatur qui sunt laboris velit amet pariatur occaecat exercitation minim. Aute enim magna irure mollit id labore.',
+      ),
+      DataModels(
+        title: 'Papua',
+        description:
+            'Sit non cillum veniam proident est esse. Nostrud occaecat ut eu pariatur enim exercitation sunt proident dolor. In pariatur aliqua officia dolore nisi in in enim in aliqua proident labore irure magna. Eiusmod in pariatur qui sunt laboris velit amet pariatur occaecat exercitation minim. Aute enim magna irure mollit id labore.',
+      ),
+      DataModels(
+        title: 'Jawa',
+        description:
+            'Sit non cillum veniam proident est esse. Nostrud occaecat ut eu pariatur enim exercitation sunt proident dolor. In pariatur aliqua officia dolore nisi in in enim in aliqua proident labore irure magna. Eiusmod in pariatur qui sunt laboris velit amet pariatur occaecat exercitation minim. Aute enim magna irure mollit id labore.',
+      ),
+    ];
+    _data.forEach((data) {
+      _dataTiles.add(DataModels(
+        title: data.title,
+        description: data.description,
+      ));
+      _listKey.currentState!.insertItem(_dataTiles.length - 1);
+    });
   }
 
   @override
@@ -81,77 +123,91 @@ class _OtherViewState extends State<OtherView>
                           onPressed: () => Get.back(),
                           icon: Icon(Icons.arrow_back_ios));
                 })),
-        body: Row(children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Hero(
-                tag: 'Other',
-                child: Padding(
-                  padding: EdgeInsets.all(widthQ * 0.05),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(15),
-                    child: Container(
-                      width: widthQ * 0.9,
-                      child: Image.asset(
-                        'assets/other.jpg',
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: widthQ * 0.05),
-                child: TweenAnimationBuilder(
-                  tween: Tween<double>(begin: 0, end: 1),
+        body: Column(
+          children: [
+            Hero(
+              tag: 'Other',
+              child: Padding(
+                padding: EdgeInsets.only(top: widthQ * 0.05),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(15),
                   child: Container(
                     width: widthQ * 0.9,
-                    padding: EdgeInsets.symmetric(horizontal: widthQ * 0.05),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Labuan Bajo',
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.bold),
-                        ),
-                        // Buat animation builder agar kita dapat melihat proses
-                        // per perubahan. Masukan animation: dengan
-                        // animation controller dan masukan colortweennya untuk merubah
-                        // sesuatu data di animation buildernya
-                        AnimatedBuilder(
-                          animation: _controller!,
-                          builder: (context, _) {
-                            return IconButton(
-                              onPressed: () {
-                                otherC.isFav.value
-                                    ? _controller!.reverse()
-                                    : _controller!.forward();
-                              },
-                              icon: Icon(Icons.favorite,
-                                  size: _sizeAnimation!.value,
-                                  color: _colorAnimation!.value),
-                            );
-                          },
-                        )
-                      ],
+                    child: Image.asset(
+                      'assets/other.jpg',
+                      fit: BoxFit.contain,
                     ),
                   ),
-                  duration: Duration(milliseconds: 800),
-                  builder: (context, value, child) {
-                    return Padding(
-                      padding: EdgeInsets.only(top: value * 20),
-                      child: Opacity(
-                        opacity: value,
-                        child: child,
-                      ),
-                    );
-                  },
                 ),
               ),
-            ],
-          ),
-        ]));
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: widthQ * 0.05),
+              child: TweenAnimationBuilder(
+                tween: Tween<double>(begin: 0, end: 1),
+                child: Container(
+                  width: widthQ * 0.9,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Labuan Bajo',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      // Buat animation builder agar kita dapat melihat proses
+                      // per perubahan. Masukan animation: dengan
+                      // animation controller dan masukan colortweennya untuk merubah
+                      // sesuatu data di animation buildernya
+                      AnimatedBuilder(
+                        animation: _controller!,
+                        builder: (context, _) {
+                          return IconButton(
+                            onPressed: () {
+                              otherC.isFav.value
+                                  ? _controller!.reverse()
+                                  : _controller!.forward();
+                            },
+                            icon: Icon(Icons.favorite,
+                                size: _sizeAnimation!.value,
+                                color: _colorAnimation!.value),
+                          );
+                        },
+                      )
+                    ],
+                  ),
+                ),
+                duration: Duration(milliseconds: 800),
+                builder: (context, value, child) {
+                  return Padding(
+                    padding: EdgeInsets.only(top: value * 10),
+                    child: Opacity(
+                      opacity: value,
+                      child: child,
+                    ),
+                  );
+                },
+              ),
+            ),
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: widthQ * 0.05),
+                child: Container(
+                  width: widthQ * 0.9,
+                  child: AnimatedList(
+                    key: _listKey,
+                    initialItemCount: _dataTiles.length,
+                    itemBuilder: (context, index, animation) {
+                      final data = _dataTiles[index];
+                      return SlideTransition(
+                          position: animation.drive(_offset!),
+                          child: Text(data.description!));
+                    },
+                  ),
+                ),
+              ),
+            )
+          ],
+        ));
   }
 }
