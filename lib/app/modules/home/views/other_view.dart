@@ -23,14 +23,23 @@ class _OtherViewState extends State<OtherView>
 
   // lalu inisialisasi Animation untuk color tweenya
   Animation? _colorAnimation;
+  Animation? _sizeAnimation;
+  Animation<double>? _curve;
   void initState() {
     // Buat vsync dan duration dari controllernya
     _controller =
         AnimationController(vsync: this, duration: Duration(milliseconds: 500));
 
+    _curve = CurvedAnimation(parent: _controller!, curve: Curves.slowMiddle);
+
     // Lalu buat animasi dari colortween nya
-    _colorAnimation = ColorTween(begin: Colors.grey[400], end: Colors.red)
-        .animate(_controller!);
+    _colorAnimation =
+        ColorTween(begin: Colors.grey[400], end: Colors.red).animate(_curve!);
+
+    _sizeAnimation = TweenSequence(<TweenSequenceItem<double>>[
+      TweenSequenceItem(tween: Tween(begin: 30, end: 40), weight: 5),
+      TweenSequenceItem(tween: Tween(begin: 40, end: 30), weight: 5),
+    ]).animate(_curve!);
 
     // Kita cek status dari animation controllernya. Kalau animation controllernya sudah complete berarti isFav true.
     _controller!.addStatusListener((status) {
@@ -121,6 +130,7 @@ class _OtherViewState extends State<OtherView>
                                     : _controller!.forward();
                               },
                               icon: Icon(Icons.favorite,
+                                  size: _sizeAnimation!.value,
                                   color: _colorAnimation!.value),
                             );
                           },
